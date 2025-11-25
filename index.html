@@ -1,0 +1,479 @@
+import React, { useState } from 'react';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Cell, LabelList } from 'recharts';
+import { Trophy, AlertTriangle, MessageSquare, Target, Users, BookOpen, Monitor, ClipboardCheck, Calendar, ArrowRight, TrendingUp, TrendingDown, MapPin } from 'lucide-react';
+
+// --- DADOS 2024 (FLORES DE GOIÁS) ---
+const dataFlores2024 = {
+  material: [
+    { id: '1.1', question: 'Clareza e organização', mb: 83, b: 17, r: 0, ru: 0, mr: 0, sat: 100 },
+    { id: '1.2', question: 'Atualidade das informações', mb: 79, b: 17, r: 4, ru: 0, mr: 0, sat: 96 },
+    { id: '1.3', question: 'Adequação ao currículo', mb: 83, b: 17, r: 0, ru: 0, mr: 0, sat: 100 },
+    { id: '1.4', question: 'Atratividade visual', mb: 71, b: 25, r: 4, ru: 0, mr: 0, sat: 96 },
+    { id: '1.5', question: 'Relevância dos exercícios', mb: 79, b: 21, r: 0, ru: 0, mr: 0, sat: 100 },
+    { id: '1.6', question: 'Facilidade de uso em sala', mb: 54, b: 30, r: 16, ru: 0, mr: 0, sat: 84 },
+  ],
+  capacitacao: [
+    { id: '3.1', question: 'Clareza nas orientações', mb: 79, b: 21, r: 0, ru: 0, mr: 0, sat: 100 },
+    { id: '3.2', question: 'Qualidade materiais', mb: 96, b: 4, r: 0, ru: 0, mr: 0, sat: 100 },
+    { id: '3.3', question: 'Domínio dos instrutores', mb: 71, b: 29, r: 0, ru: 0, mr: 0, sat: 100 },
+    { id: '3.4', question: 'Aplicabilidade conteúdo', mb: 71, b: 29, r: 0, ru: 0, mr: 0, sat: 100 },
+    { id: '3.5', question: 'Frequência e continuidade', mb: 63, b: 37, r: 0, ru: 0, mr: 0, sat: 100 },
+    { id: '3.6', question: 'Suporte pós-capacitação', mb: 54, b: 38, r: 8, ru: 0, mr: 0, sat: 92 },
+  ],
+  portal: [
+    { id: '2.1', question: 'Facilidade de navegação', mb: 75, b: 21, r: 4, ru: 0, mr: 0, sat: 96 },
+    { id: '2.2', question: 'Funcionalidade e recursos', mb: 75, b: 21, r: 4, ru: 0, mr: 0, sat: 96 },
+    { id: '2.3', question: 'Qualidade do conteúdo', mb: 83, b: 17, r: 0, ru: 0, mr: 0, sat: 100 },
+    { id: '2.4', question: 'Adequação das atividades', mb: 71, b: 29, r: 0, ru: 0, mr: 0, sat: 100 },
+    { id: '2.5', question: 'Suporte técnico', mb: 62, b: 38, r: 0, ru: 0, mr: 0, sat: 100 },
+    { id: '2.6', question: 'Atualização frequente', mb: 79, b: 21, r: 0, ru: 0, mr: 0, sat: 100 },
+  ],
+  passe: [
+    { id: '4.1', question: 'Precisão na avaliação', mb: 63, b: 25, r: 12, ru: 0, mr: 0, sat: 88 },
+    { id: '4.2', question: 'Relevância conteúdos', mb: 67, b: 29, r: 4, ru: 0, mr: 0, sat: 96 },
+    { id: '4.3', question: 'Facilidade na aplicação', mb: 67, b: 25, r: 8, ru: 0, mr: 0, sat: 92 },
+    { id: '4.4', question: 'Feedback equipe pedag.', mb: 63, b: 33, r: 4, ru: 0, mr: 0, sat: 96 },
+    { id: '4.5', question: 'Frequência avaliações', mb: 67, b: 29, r: 4, ru: 0, mr: 0, sat: 96 },
+    { id: '4.6', question: 'Impacto no desempenho', mb: 63, b: 29, r: 8, ru: 0, mr: 0, sat: 92 },
+  ],
+  nps: 65,
+  comentarios: [
+    { categoria: 'Infraestrutura', texto: "A escola necessita de área de lazer para os alunos, bem como sala de brinquedoteca e tecnologias." },
+    { categoria: 'Gestão de Pessoas', texto: "O ensino é ótimo, porém o problema são alguns professores que só querem cumprir carga horária. A diretora dá tudo de si." },
+    { categoria: 'Capacitação', texto: "Oferecer mais formações e capacitações presenciais aos professores." },
+    { categoria: 'Infraestrutura', texto: "Melhorias no espaço físico da escola. Construção de quadras." }
+  ]
+};
+
+// --- DADOS 2025 (FLORES DE GOIÁS - NOV) ---
+const dataFlores2025 = {
+  material: [
+    { id: '1.1', question: 'Clareza e organização', mb: 80, b: 7, r: 13, ru: 0, mr: 0, sat: 87 },
+    { id: '1.2', question: 'Atualidade das informações', mb: 73, b: 13, r: 13, ru: 0, mr: 0, sat: 86 },
+    { id: '1.3', question: 'Adequação ao currículo', mb: 73, b: 13, r: 13, ru: 0, mr: 0, sat: 86 },
+    { id: '1.4', question: 'Atratividade visual', mb: 73, b: 13, r: 13, ru: 0, mr: 0, sat: 86 },
+    { id: '1.5', question: 'Relevância dos exercícios', mb: 67, b: 27, r: 6, ru: 0, mr: 0, sat: 93 },
+  ],
+  capacitacao: [
+    { id: '3.1', question: 'Clareza nas orientações', mb: 60, b: 27, r: 13, ru: 0, mr: 0, sat: 87 },
+    { id: '3.2', question: 'Qualidade materiais', mb: 80, b: 7, r: 13, ru: 0, mr: 0, sat: 87 },
+    { id: '3.3', question: 'Domínio dos instrutores', mb: 87, b: 7, r: 7, ru: 0, mr: 0, sat: 93 },
+    { id: '3.4', question: 'Aplicabilidade conteúdo', mb: 73, b: 27, r: 0, ru: 0, mr: 0, sat: 100 },
+    { id: '3.5', question: 'Frequência e continuidade', mb: 73, b: 20, r: 7, ru: 0, mr: 0, sat: 93 },
+    { id: '3.6', question: 'Suporte pós-capacitação', mb: 53, b: 20, r: 27, ru: 0, mr: 0, sat: 73 },
+  ],
+  portal: [
+    { id: '2.1', question: 'Facilidade de navegação', mb: 60, b: 40, r: 0, ru: 0, mr: 0, sat: 100 },
+    { id: '2.2', question: 'Funcionalidade e recursos', mb: 73, b: 27, r: 0, ru: 0, mr: 0, sat: 100 },
+    { id: '2.3', question: 'Qualidade do conteúdo', mb: 73, b: 20, r: 7, ru: 0, mr: 0, sat: 93 },
+    { id: '2.4', question: 'Adequação das atividades', mb: 67, b: 13, r: 20, ru: 0, mr: 0, sat: 80 },
+    { id: '2.5', question: 'Suporte técnico', mb: 60, b: 33, r: 7, ru: 0, mr: 0, sat: 93 },
+    { id: '2.6', question: 'Atualização frequente', mb: 67, b: 20, r: 13, ru: 0, mr: 0, sat: 87 },
+  ],
+  passe: [
+    { id: '4.1', question: 'Precisão na avaliação', mb: 47, b: 33, r: 20, ru: 0, mr: 0, sat: 80 },
+    { id: '4.2', question: 'Relevância conteúdos', mb: 53, b: 33, r: 13, ru: 0, mr: 0, sat: 86 },
+    { id: '4.3', question: 'Facilidade na aplicação', mb: 60, b: 27, r: 13, ru: 0, mr: 0, sat: 87 },
+    { id: '4.4', question: 'Feedback equipe pedag.', mb: 67, b: 20, r: 13, ru: 0, mr: 0, sat: 87 },
+    { id: '4.5', question: 'Frequência avaliações', mb: 60, b: 27, r: 13, ru: 0, mr: 0, sat: 87 },
+  ],
+  nps: 6,
+  comentarios: [
+    { categoria: 'Pedagógico', texto: "Estão colocando conteúdos que os alunos ainda não estudaram." },
+    { categoria: 'Processos', texto: "Quantidade de avaliações demasiada. Alunos realizam do município e do SESI. Repensar proposta." },
+    { categoria: 'Infraestrutura', texto: "Colocar TVs smart em todas as salas de aula para mais rendimento." },
+    { categoria: 'Positivo', texto: "Material muito bom. Quem visita o portal consegue fazer um excelente trabalho." },
+    { categoria: 'Elogio', texto: "São maravilhosas as capacitações, queremos mensal e presencial." }
+  ]
+};
+
+// --- DADOS RIO QUENTE (Consolidado) ---
+const dataRioQuente = {
+  material: [
+    { id: '1.4', question: 'Atratividade visual', mb: 62, b: 34, r: 4, ru: 0, mr: 0, sat: 96 },
+    { id: '1.2', question: 'Atualidade das informações', mb: 60, b: 32, r: 6, ru: 2, mr: 0, sat: 92 },
+    { id: '1.3', question: 'Adequação ao currículo', mb: 43, b: 49, r: 6, ru: 2, mr: 0, sat: 92 },
+    { id: '1.1', question: 'Clareza e organização', mb: 47, b: 40, r: 11, ru: 2, mr: 0, sat: 87 },
+    { id: '1.5', question: 'Relevância dos exercícios', mb: 36, b: 49, r: 13, ru: 2, mr: 0, sat: 85 },
+    { id: '1.6', question: 'Facilidade de uso em sala', mb: 47, b: 34, r: 15, ru: 4, mr: 0, sat: 81 },
+  ],
+  capacitacao: [
+    { id: '3.3', question: 'Domínio dos instrutores', mb: 62, b: 34, r: 2, ru: 2, mr: 0, sat: 96 },
+    { id: '3.2', question: 'Qualidade materiais', mb: 51, b: 40, r: 9, ru: 0, mr: 0, sat: 91 },
+    { id: '3.1', question: 'Clareza nas orientações', mb: 43, b: 47, r: 9, ru: 2, mr: 0, sat: 90 },
+    { id: '3.4', question: 'Aplicabilidade conteúdo', mb: 49, b: 40, r: 9, ru: 2, mr: 0, sat: 89 },
+    { id: '3.6', question: 'Suporte pós-capacitação', mb: 47, b: 40, r: 11, ru: 2, mr: 0, sat: 87 },
+    { id: '3.5', question: 'Frequência e continuidade', mb: 38, b: 49, r: 9, ru: 4, mr: 0, sat: 87 },
+  ],
+  portal: [
+    { id: '2.1', question: 'Facilidade de navegação', mb: 62, b: 34, r: 4, ru: 0, mr: 0, sat: 96 },
+    { id: '2.3', question: 'Qualidade do conteúdo', mb: 47, b: 49, r: 2, ru: 2, mr: 0, sat: 96 },
+    { id: '2.6', question: 'Atualização frequente', mb: 49, b: 45, r: 2, ru: 4, mr: 0, sat: 94 },
+    { id: '2.5', question: 'Suporte técnico', mb: 57, b: 36, r: 6, ru: 0, mr: 0, sat: 93 },
+    { id: '2.2', question: 'Funcionalidade e recursos', mb: 60, b: 32, r: 9, ru: 0, mr: 0, sat: 92 },
+    { id: '2.4', question: 'Adequação das atividades', mb: 36, b: 47, r: 13, ru: 4, mr: 0, sat: 83 },
+  ],
+  passe: [
+    { id: '4.4', question: 'Feedback equipe pedag.', mb: 53, b: 45, r: 2, ru: 0, mr: 0, sat: 98 },
+    { id: '4.5', question: 'Frequência avaliações', mb: 45, b: 47, r: 9, ru: 0, mr: 0, sat: 92 },
+    { id: '4.3', question: 'Facilidade na aplicação', mb: 45, b: 47, r: 6, ru: 0, mr: 2, sat: 92 },
+    { id: '4.2', question: 'Relevância conteúdos', mb: 40, b: 51, r: 6, ru: 2, mr: 0, sat: 91 },
+    { id: '4.1', question: 'Precisão na avaliação', mb: 45, b: 43, r: 11, ru: 0, mr: 2, sat: 88 },
+    { id: '4.6', question: 'Impacto no desempenho', mb: 32, b: 51, r: 15, ru: 2, mr: 0, sat: 83 },
+  ],
+  nps: 36,
+  comentarios: [
+    { categoria: 'Gestão/Processos', texto: "Capacitação com mais frequência... cada setor 'FALAR A MESMA LINGUAGEM'." },
+    { categoria: 'Pedagógico', texto: "Acredito que o material deveria contar com a recomposição de aprendizagem..." },
+    { categoria: 'Inclusão', texto: "Material mais adaptado e flexibilizações para neurodivergentes." },
+    { categoria: 'Robótica/Tecnologia', texto: "Melhoria pegando todos os conteúdos de robótica focando apenas nas atividades possíveis com notebook." },
+    { categoria: 'Clima/Cultura', texto: "Alguns funcionários são muito agressivos nas suas abordagens." },
+    { categoria: 'Positivo', texto: "Nesse ano foi uma experiência incrível, e acredito que no próximo ano letivo vai ser ainda melhor." }
+  ]
+};
+
+// Cores
+const COLORS = {
+  mb: "#15803d", b: "#4ade80", r: "#facc15", ru: "#fb923c", mr: "#ef4444",
+  year24: "#94a3b8", year25: "#2563eb"
+};
+
+const CustomTooltip = ({ active, payload, label }) => {
+  if (active && payload && payload.length) {
+    return (
+      <div className="bg-white p-3 border border-gray-200 shadow-lg rounded-lg text-sm z-50">
+        <p className="font-bold text-gray-800 mb-2">{label}</p>
+        {payload.map((entry, index) => (
+          <div key={index} className="flex items-center gap-2">
+            <div className="w-3 h-3 rounded-full" style={{ backgroundColor: entry.color }}></div>
+            <span className="capitalize text-gray-600">
+              {entry.name === 'mb' ? 'Muito Bom' : entry.name === 'b' ? 'Bom' : entry.name === 'r' ? 'Regular' : entry.name === '2024' ? 'Ano 2024' : entry.name === '2025' ? 'Ano 2025' : entry.name}: 
+               <span className="font-bold ml-1">{entry.value}%</span>
+            </span>
+          </div>
+        ))}
+      </div>
+    );
+  }
+  return null;
+};
+
+// Componente para Gráfico Detalhado (Ano Único)
+const SingleYearChart = ({ title, data, icon: Icon }) => (
+  <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 mb-6">
+    <div className="flex items-center gap-2 mb-6">
+      <div className="p-2 bg-blue-50 rounded-lg text-blue-600">
+        <Icon size={24} />
+      </div>
+      <h3 className="text-xl font-bold text-gray-800">{title}</h3>
+    </div>
+    {data && data.length > 0 ? (
+      <div className="h-[350px] w-full">
+        <ResponsiveContainer width="100%" height="100%">
+          <BarChart layout="vertical" data={data} margin={{ top: 5, right: 30, left: 40, bottom: 5 }}>
+            <CartesianGrid strokeDasharray="3 3" horizontal={true} vertical={false} stroke="#e5e7eb" />
+            <XAxis type="number" domain={[0, 100]} hide />
+            <YAxis dataKey="question" type="category" width={180} tick={{fontSize: 11, fill: '#4b5563'}} interval={0} />
+            <Tooltip content={<CustomTooltip />} />
+            <Legend wrapperStyle={{ paddingTop: '20px' }} />
+            <Bar dataKey="mb" name="Muito Bom" stackId="a" fill={COLORS.mb} barSize={20}>
+               <LabelList dataKey="mb" position="center" fill="#fff" fontSize={10} formatter={(v) => v > 5 ? `${v}%` : ''} />
+            </Bar>
+            <Bar dataKey="b" name="Bom" stackId="a" fill={COLORS.b} barSize={20}>
+               <LabelList dataKey="b" position="center" fill="#1f2937" fontSize={10} formatter={(v) => v > 5 ? `${v}%` : ''} />
+            </Bar>
+            <Bar dataKey="r" name="Regular" stackId="a" fill={COLORS.r} barSize={20}>
+               <LabelList dataKey="r" position="center" fill="#1f2937" fontSize={10} formatter={(v) => v > 5 ? `${v}%` : ''} />
+            </Bar>
+            <Bar dataKey="ru" name="Ruim" stackId="a" fill={COLORS.ru} barSize={20}>
+               <LabelList dataKey="ru" position="center" fill="#1f2937" fontSize={10} formatter={(v) => v > 5 ? `${v}%` : ''} />
+            </Bar>
+            <Bar dataKey="mr" name="Muito Ruim" stackId="a" fill={COLORS.mr} barSize={20} radius={[0, 4, 4, 0]}>
+               <LabelList dataKey="mr" position="center" fill="#fff" fontSize={10} formatter={(v) => v > 5 ? `${v}%` : ''} />
+            </Bar>
+          </BarChart>
+        </ResponsiveContainer>
+      </div>
+    ) : (
+      <div className="h-[200px] flex items-center justify-center text-gray-400 bg-gray-50 rounded-lg border-dashed border-2 border-gray-200">
+        Dados não disponíveis para este período
+      </div>
+    )}
+  </div>
+);
+
+// Componente para Gráfico Comparativo (2024 vs 2025)
+const ComparisonChart = ({ title, data24, data25, icon: Icon }) => {
+  // Mesclar dados para comparação baseada na pergunta
+  const mergedData = data24.map(item24 => {
+    const item25 = data25.find(d => d.id === item24.id);
+    return {
+      question: item24.question,
+      sat24: item24.sat,
+      sat25: item25 ? item25.sat : 0
+    };
+  }).filter(item => item.sat25 > 0); // Filtrar apenas o que tem correspondência
+
+  return (
+    <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 mb-6">
+      <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center gap-2">
+          <div className="p-2 bg-purple-50 rounded-lg text-purple-600">
+            <Icon size={24} />
+          </div>
+          <h3 className="text-xl font-bold text-gray-800">{title} <span className="text-sm font-normal text-gray-500">(Comparativo de Satisfação %)</span></h3>
+        </div>
+      </div>
+      <div className="h-[400px] w-full">
+        <ResponsiveContainer width="100%" height="100%">
+          <BarChart layout="vertical" data={mergedData} margin={{ top: 5, right: 30, left: 40, bottom: 5 }}>
+            <CartesianGrid strokeDasharray="3 3" horizontal={true} vertical={false} stroke="#e5e7eb" />
+            <XAxis type="number" domain={[0, 100]} />
+            <YAxis dataKey="question" type="category" width={180} tick={{fontSize: 11, fill: '#4b5563'}} interval={0} />
+            <Tooltip />
+            <Legend />
+            <Bar dataKey="sat24" name="2024" fill={COLORS.year24} barSize={15} radius={[0, 4, 4, 0]}>
+              <LabelList dataKey="sat24" position="right" fill="#64748b" fontSize={10} formatter={(v) => `${v}%`} />
+            </Bar>
+            <Bar dataKey="sat25" name="2025" fill={COLORS.year25} barSize={15} radius={[0, 4, 4, 0]}>
+              <LabelList dataKey="sat25" position="right" fill="#2563eb" fontSize={10} fontWeight="bold" formatter={(v) => `${v}%`} />
+            </Bar>
+          </BarChart>
+        </ResponsiveContainer>
+      </div>
+    </div>
+  );
+};
+
+export default function App() {
+  const [unit, setUnit] = useState('flores'); // 'flores' | 'rio_quente'
+  const [year, setYear] = useState('2025'); // '2024', '2025', 'compare' (apenas para Flores)
+
+  // Lógica de Seleção de Dados
+  let currentData;
+  let isCompare = false;
+
+  if (unit === 'rio_quente') {
+    currentData = dataRioQuente;
+    isCompare = false;
+  } else {
+    // Lógica para Flores de Goiás
+    isCompare = year === 'compare';
+    currentData = year === '2024' ? dataFlores2024 : dataFlores2025;
+  }
+
+  // Header Color Logic
+  const headerColor = unit === 'flores' ? 'bg-indigo-900' : 'bg-teal-800';
+  const buttonActiveColor = unit === 'flores' ? 'bg-indigo-500' : 'bg-teal-500';
+
+  return (
+    <div className="min-h-screen bg-slate-50 font-sans text-gray-800 pb-12">
+      {/* Header */}
+      <header className={`${headerColor} text-white p-6 shadow-lg transition-colors duration-500`}>
+        <div className="max-w-7xl mx-auto flex flex-col justify-between">
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6">
+            <div>
+              <h1 className="text-3xl font-bold tracking-tight">Relatório de Avaliação Institucional</h1>
+              <p className="text-white/80 mt-1 flex items-center gap-2">
+                <MapPin size={16} />
+                {unit === 'flores' ? 'Unidade Flores de Goiás' : 'Unidade Rio Quente'}
+              </p>
+            </div>
+
+            {/* Seletor de Unidade */}
+            <div className="mt-4 md:mt-0 flex bg-black/20 p-1 rounded-lg backdrop-blur-sm">
+              <button 
+                onClick={() => { setUnit('flores'); setYear('2025'); }}
+                className={`px-4 py-2 rounded-md text-sm font-medium transition-all ${unit === 'flores' ? 'bg-white text-indigo-900 shadow-sm' : 'text-white/70 hover:text-white'}`}
+              >
+                Flores de Goiás
+              </button>
+              <button 
+                onClick={() => setUnit('rio_quente')}
+                className={`px-4 py-2 rounded-md text-sm font-medium transition-all ${unit === 'rio_quente' ? 'bg-white text-teal-900 shadow-sm' : 'text-white/70 hover:text-white'}`}
+              >
+                Rio Quente
+              </button>
+            </div>
+          </div>
+          
+          {/* Controle de Filtro de Ano (Apenas para Flores) */}
+          {unit === 'flores' && (
+            <div className="flex justify-end border-t border-white/10 pt-4">
+              <div className="flex bg-black/20 p-1 rounded-lg">
+                <button 
+                  onClick={() => setYear('2024')}
+                  className={`px-4 py-1.5 rounded-md text-xs font-medium transition-all ${year === '2024' ? 'bg-white/90 text-indigo-900 shadow-sm' : 'text-indigo-100 hover:text-white'}`}
+                >
+                  2024
+                </button>
+                <button 
+                  onClick={() => setYear('2025')}
+                  className={`px-4 py-1.5 rounded-md text-xs font-medium transition-all ${year === '2025' ? 'bg-white/90 text-indigo-900 shadow-sm' : 'text-indigo-100 hover:text-white'}`}
+                >
+                  2025
+                </button>
+                <button 
+                  onClick={() => setYear('compare')}
+                  className={`px-4 py-1.5 rounded-md text-xs font-medium transition-all flex items-center gap-1 ${year === 'compare' ? 'bg-indigo-500 text-white shadow-sm' : 'text-indigo-100 hover:text-white'}`}
+                >
+                  <TrendingUp size={12} />
+                  Comparativo
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+      </header>
+
+      <main className="max-w-7xl mx-auto px-4 mt-8">
+        
+        {/* KPI NPS */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+          <div className={`p-6 rounded-xl shadow-md border-t-4 flex flex-col items-center justify-center col-span-1 bg-white 
+            ${unit === 'rio_quente' ? 'border-amber-500' : (year === '2024' || (isCompare && currentData.nps > 50)) ? 'border-green-600' : 'border-red-600'}`}>
+            <h2 className="text-gray-500 text-sm font-semibold uppercase tracking-wider mb-2">NPS (Net Promoter Score)</h2>
+            
+            {isCompare && unit === 'flores' ? (
+               <div className="flex flex-col items-center w-full">
+                  <div className="flex justify-between w-full px-4 mb-2">
+                    <span className="text-sm font-bold text-gray-400">2024</span>
+                    <span className="text-sm font-bold text-gray-400">2025</span>
+                  </div>
+                  <div className="flex items-center gap-4">
+                    <span className="text-4xl font-black text-green-700">65</span>
+                    <ArrowRight size={24} className="text-gray-300"/>
+                    <span className="text-4xl font-black text-red-600">6</span>
+                  </div>
+                  <div className="mt-4 px-3 py-1 bg-red-50 text-red-700 text-xs font-bold rounded-full uppercase flex items-center gap-1">
+                    <TrendingDown size={12} /> Queda Crítica (-59pts)
+                  </div>
+               </div>
+            ) : (
+              <>
+                <div className="flex items-end gap-2">
+                  <span className={`text-6xl font-black ${
+                    unit === 'rio_quente' ? 'text-amber-600' : 
+                    (year === '2024' ? 'text-green-700' : 'text-red-700')
+                  }`}>
+                    {currentData.nps}
+                  </span>
+                  <span className="text-lg text-gray-400 mb-2">/ 100</span>
+                </div>
+                <div className={`mt-4 px-3 py-1 text-xs font-bold rounded-full uppercase flex items-center gap-1 
+                  ${unit === 'rio_quente' ? 'bg-amber-50 text-amber-700' : 
+                   (year === '2024' ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700')}`}>
+                   {unit === 'rio_quente' ? <Target size={12} /> : (year === '2024' ? <Trophy size={12} /> : <AlertTriangle size={12} />)}
+                   {unit === 'rio_quente' ? 'Zona de Aperfeiçoamento' : (year === '2024' ? 'Zona de Qualidade' : 'Zona Crítica')}
+                </div>
+              </>
+            )}
+          </div>
+
+          {/* Insights Dinâmicos */}
+          <div className="bg-white p-6 rounded-xl shadow-md col-span-1 md:col-span-2">
+            <div className="flex items-center gap-2 mb-4">
+              <Target className={unit === 'rio_quente' ? "text-teal-600" : "text-indigo-600"} size={20} />
+              <h2 className="text-lg font-bold text-gray-800">
+                {isCompare ? "Análise Comparativa (2024 vs 2025)" : `Destaques Estratégicos - ${unit === 'rio_quente' ? 'Rio Quente' : `Flores ${year}`}`}
+              </h2>
+            </div>
+            
+            <div className="grid grid-cols-1 gap-4 text-sm text-gray-600">
+              {unit === 'rio_quente' ? (
+                 <>
+                  <div className="flex items-start gap-2 bg-teal-50 p-3 rounded-lg border border-teal-100">
+                    <Trophy className="text-teal-600 mt-1 flex-shrink-0" size={16} />
+                    <p>
+                      <strong>Excelência Visual e Pedagógica:</strong> O "Feedback para a Equipe" (PASSE) atingiu 98% de satisfação e a Atratividade do Material 96%, pontos fortíssimos da unidade.
+                    </p>
+                  </div>
+                  <div className="flex items-start gap-2 bg-amber-50 p-3 rounded-lg border border-amber-100">
+                    <AlertTriangle className="text-amber-600 mt-1 flex-shrink-0" size={16} />
+                    <p>
+                      <strong>Usabilidade em Sala:</strong> A "Facilidade de uso em sala" (Material) é o ponto de maior atrito (81%), exigindo revisão ergonômica ou treinamento focado para professores.
+                    </p>
+                  </div>
+                </>
+              ) : isCompare ? (
+                <>
+                  <div className="flex items-start gap-2 bg-red-50 p-3 rounded-lg border border-red-100">
+                    <TrendingDown className="text-red-500 mt-1 flex-shrink-0" size={16} />
+                    <p>
+                      <strong>Colapso de Lealdade (NPS):</strong> A queda de 65 para 6 no NPS é alarmante. Problemas operacionais e excesso de avaliações impactaram severamente a percepção de valor.
+                    </p>
+                  </div>
+                  <div className="flex items-start gap-2 bg-blue-50 p-3 rounded-lg border border-blue-100">
+                    <Users className="text-blue-500 mt-1 flex-shrink-0" size={16} />
+                    <p>
+                      <strong>Resiliência Técnica:</strong> A Capacitação mantém-se forte em "Domínio dos Instrutores" (93%), um pilar de sustentação em meio à crise.
+                    </p>
+                  </div>
+                </>
+              ) : year === '2024' ? (
+                <>
+                  <p>✅ <strong>Ano de Ouro:</strong> NPS 65 (Qualidade). O PASSE e o Material Didático tiveram quesitos atingindo 100% de satisfação.</p>
+                  <p>⚠️ <strong>Sinal Amarelo:</strong> A "Facilidade de uso em sala" (54% Muito Bom) já demonstrava fragilidade operacional.</p>
+                </>
+              ) : (
+                <>
+                  <p>🚨 <strong>Crise Operacional:</strong> Queda relevante no Portal (80% em adequação). Comentários indicam descompasso entre conteúdo ensinado e cobrado.</p>
+                  <p>📉 <strong>Sobrecarga:</strong> Excesso de avaliações citado como ponto crítico.</p>
+                </>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* Gráficos */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {isCompare ? (
+            <>
+              <ComparisonChart title="Material Didático" data24={dataFlores2024.material} data25={dataFlores2025.material} icon={BookOpen} />
+              <ComparisonChart title="Capacitação" data24={dataFlores2024.capacitacao} data25={dataFlores2025.capacitacao} icon={Users} />
+              <ComparisonChart title="Portal SESI Educação" data24={dataFlores2024.portal} data25={dataFlores2025.portal} icon={Monitor} />
+              <ComparisonChart title="PASSE (Avaliação)" data24={dataFlores2024.passe} data25={dataFlores2025.passe} icon={ClipboardCheck} />
+            </>
+          ) : (
+            <>
+              <SingleYearChart title="Material Didático" data={currentData.material} icon={BookOpen} />
+              <SingleYearChart title="Capacitação" data={currentData.capacitacao} icon={Users} />
+              <SingleYearChart title="Portal SESI Educação" data={currentData.portal} icon={Monitor} />
+              <SingleYearChart title="PASSE (Avaliação)" data={currentData.passe} icon={ClipboardCheck} />
+            </>
+          )}
+        </div>
+
+        {/* Comentários */}
+        <div className="mt-8 bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+          <div className="p-6 bg-gray-50 border-b border-gray-200 flex justify-between items-center">
+            <div className="flex items-center gap-2">
+              <MessageSquare className={unit === 'rio_quente' ? "text-teal-600" : "text-indigo-600"} size={20} />
+              <h2 className="text-lg font-bold text-gray-800">
+                {isCompare ? "Voz do Usuário (Acumulado 24/25)" : `Comentários e Sugestões (${unit === 'rio_quente' ? 'Consolidado' : year})`}
+              </h2>
+            </div>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-0 divide-y md:divide-y-0 md:divide-x divide-gray-100">
+            {(isCompare ? [...dataFlores2024.comentarios, ...dataFlores2025.comentarios] : currentData.comentarios).map((com, idx) => (
+              <div key={idx} className="p-6 hover:bg-gray-50 transition-colors">
+                <span className={`inline-block px-2 py-1 rounded text-xs font-bold uppercase tracking-wider mb-3
+                  ${com.categoria === 'Positivo' || com.categoria === 'Elogio' ? 'bg-green-100 text-green-700' : 
+                    com.categoria.includes('Infra') || com.categoria.includes('Clima') ? 'bg-orange-100 text-orange-700' : 
+                    com.categoria.includes('Processos') || com.categoria.includes('Pedagógico') ? 'bg-red-100 text-red-700' :
+                    'bg-blue-100 text-blue-700'}`}>
+                  {com.categoria}
+                </span>
+                <p className="text-sm text-gray-600 leading-relaxed italic">
+                  "{com.texto}"
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+
+      </main>
+    </div>
+  );
+}
